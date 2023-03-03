@@ -1,11 +1,64 @@
+import { useState } from 'react';
 import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from '@/styles/Home.module.css'
+import { CldImage, CldUploadWidget } from 'next-cloudinary';
+import { useDebouncedCallback } from 'use-debounce';
 
-const inter = Inter({ subsets: ['latin'] })
+import styles from '@/styles/Home.module.scss';
+
+const MEME_BACKGROUNDS = [
+  {
+    id: 'meme-background/pikachu_ny9pcc',
+    title: 'Surprised Pikachu',
+    width: 680,
+    height: 657,
+  },
+  {
+    id: 'meme-background/miguel_w0uh7d',
+    title: 'Miguel',
+    width: 400,
+    height: 400,
+  },
+  {
+    id: 'meme-background/colby_akcjgj',
+    title: 'Colby',
+    width: 400,
+    height: 400,
+  },
+  {
+    id: 'meme-background/know_yrha9n',
+    title: 'Knowing',
+    width: 640,
+    height: 360,
+  },
+]
 
 export default function Home() {
+  const [topText, setTopText] = useState('Top Text');
+  const [bottomText, setBottomText] = useState('Bottom Text');
+  const [background, setBackground] = useState(MEME_BACKGROUNDS[0].id);
+
+  const imageKey = [topText, bottomText, background].join('-');
+
+  const debouncedSetTopText = useDebouncedCallback((value) => setTopText(value), 250);
+  const debouncedSetBottomText = useDebouncedCallback((value) => setBottomText(value), 250);
+
+  function handleOnTopTextChange(e: any) {
+    debouncedSetTopText(e.currentTarget.value);
+  }
+
+  function handleOnBottomTextChange(e: any) {
+    debouncedSetBottomText(e.currentTarget.value);
+  }
+
+  function handleOnBackgroundchange(id: any) {
+    setBackground(id);
+  }
+
+  function handleOnBackgroundUpload(result: any) {
+    setBackground(result.info.public_id);
+    console.log(result)
+  }
+
   return (
     <>
       <Head>
@@ -15,107 +68,111 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        <div className={styles.description}>
-          <p>
-            Get started by editing&nbsp;
-            <code className={styles.code}>src/pages/index.tsx</code>
-          </p>
-          <div>
-            <a
-              href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              By{' '}
-              <Image
-                src="/vercel.svg"
-                alt="Vercel Logo"
-                className={styles.vercelLogo}
-                width={100}
-                height={24}
-                priority
-              />
-            </a>
-          </div>
+
+
+
+        <div className={styles.center}>
+          <h1 className={styles.title}>Meme Generator</h1>
         </div>
 
         <div className={styles.center}>
-          <Image
-            className={styles.logo}
-            src="/next.svg"
-            alt="Next.js Logo"
-            width={180}
-            height={37}
-            priority
-          />
-          <div className={styles.thirteen}>
-            <Image
-              src="/thirteen.svg"
-              alt="13"
-              width={40}
-              height={31}
-              priority
+          <div>
+            <form>
+              <div className={styles.text}>
+                <div>
+                  <label>Top Text</label>
+                  <input type="text" name="top_text" onChange={handleOnTopTextChange} />
+                </div>
+                <div>
+                  <label>Bottom Text</label>
+                  <input type="text" name="bottom_text" onChange={handleOnBottomTextChange} />
+                </div>
+              </div>
+              <div>
+                <div>
+                  <label>Backgrounds</label>
+                  <ul className={styles.backgrounds}>
+                    {MEME_BACKGROUNDS.map(({ id, title, width, height }) => {
+                      return (
+                        <li key={id} onClick={() => handleOnBackgroundchange(id)}>
+                          <CldImage
+                            src={id}
+                            width="300"
+                            height="300"
+                            crop="fill"
+                            alt={title}
+                          />
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </div>
+              </div>
+              <div className={styles.upload}>
+                <CldUploadWidget uploadPreset="cloudinary-meme-generator" onUpload={handleOnBackgroundUpload}>
+                  {({ open }) => {
+                    function handleOnClick(e: any) {
+                      e.preventDefault();
+                      open();
+                    }
+                    return (
+                      <button onClick={handleOnClick}>
+                        Upload an Image
+                      </button>
+                    );
+                  }}
+                </CldUploadWidget>
+              </div>
+            </form>
+          </div>
+          <div className={styles.image} style={{width:640,height:640}}>
+            <CldImage
+              key={imageKey}
+              src={background}
+              width="640"
+              height="640"
+              crop="fill"
+              overlays={[
+                {
+                  width: 2670 - 20,
+                  crop: 'fit',
+                  position: {
+                    x: 0,
+                    y: 50,
+                    gravity: 'north',
+                  },
+                  text: {
+                    color: 'white',
+                    fontFamily: 'Source Sans Pro',
+                    fontSize: 90,
+                    fontWeight: 'bold',
+                    text: topText.toUpperCase(),
+                    stroke: true,
+                    border: '20px_solid_black'
+                  }
+                },
+                {
+                  width: 2670 - 20,
+                  crop: 'fit',
+                  position: {
+                    x: 0,
+                    y: 50,
+                    gravity: 'south',
+                  },
+                  text: {
+                    color: 'white',
+                    fontFamily: 'Source Sans Pro',
+                    fontSize: 90,
+                    fontWeight: 'bold',
+                    text: bottomText.toUpperCase(),
+                    stroke: true,
+                    border: '20px_solid_black'
+                  }
+                }
+              ]}
+              alt="4 hot dogs on a plate"
             />
           </div>
-        </div>
-
-        <div className={styles.grid}>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Docs <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Find in-depth information about Next.js features and&nbsp;API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Learn <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Learn about Next.js in an interactive course with&nbsp;quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Templates <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Discover and deploy boilerplate example Next.js&nbsp;projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Deploy <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Instantly deploy your Next.js site to a shareable URL
-              with&nbsp;Vercel.
-            </p>
-          </a>
         </div>
       </main>
     </>
