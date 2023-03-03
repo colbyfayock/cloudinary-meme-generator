@@ -7,25 +7,25 @@ import styles from '@/styles/Home.module.scss';
 
 const MEME_BACKGROUNDS = [
   {
-    id: 'meme-background/pikachu_ny9pcc',
+    id: 'meme-generator-assets/pikachu',
     title: 'Surprised Pikachu',
     width: 680,
     height: 657,
   },
   {
-    id: 'meme-background/miguel_w0uh7d',
+    id: 'meme-generator-assets/miguel',
     title: 'Miguel',
     width: 400,
     height: 400,
   },
   {
-    id: 'meme-background/colby_akcjgj',
+    id: 'meme-generator-assets/colby',
     title: 'Colby',
     width: 400,
     height: 400,
   },
   {
-    id: 'meme-background/know_yrha9n',
+    id: 'meme-generator-assets/know',
     title: 'Knowing',
     width: 640,
     height: 360,
@@ -79,29 +79,31 @@ export default function Home() {
           <div>
             <form>
               <div className={styles.text}>
-                <div>
-                  <label>Top Text</label>
-                  <input type="text" name="top_text" onChange={handleOnTopTextChange} />
+                <div className={styles.formRow}>
+                  <label htmlFor="top-text">Top Text</label>
+                  <input id="top-text" type="text" name="top_text" onChange={handleOnTopTextChange} />
                 </div>
-                <div>
-                  <label>Bottom Text</label>
-                  <input type="text" name="bottom_text" onChange={handleOnBottomTextChange} />
+                <div className={styles.formRow}>
+                  <label htmlFor="bottom-text">Bottom Text</label>
+                  <input id="bottom-text" type="text" name="bottom_text" onChange={handleOnBottomTextChange} />
                 </div>
               </div>
               <div>
-                <div>
-                  <label>Backgrounds</label>
-                  <ul className={styles.backgrounds}>
-                    {MEME_BACKGROUNDS.map(({ id, title, width, height }) => {
+                <div className={styles.formRow}>
+                  <label htmlFor="backgrounds">Backgrounds</label>
+                  <ul id="backgrounds" className={styles.backgrounds}>
+                    {MEME_BACKGROUNDS.map(({ id, title }) => {
                       return (
-                        <li key={id} onClick={() => handleOnBackgroundchange(id)}>
-                          <CldImage
-                            src={id}
-                            width="300"
-                            height="300"
-                            crop="fill"
-                            alt={title}
-                          />
+                        <li key={id}>
+                          <button onClick={() => handleOnBackgroundchange(id)}>
+                            <CldImage
+                              src={id}
+                              width="300"
+                              height="300"
+                              crop="fill"
+                              alt={title}
+                            />
+                          </button>
                         </li>
                       )
                     })}
@@ -109,7 +111,7 @@ export default function Home() {
                 </div>
               </div>
               <div className={styles.upload}>
-                <CldUploadWidget uploadPreset="cloudinary-meme-generator" onUpload={handleOnBackgroundUpload}>
+                <CldUploadWidget uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET} onUpload={handleOnBackgroundUpload}>
                   {({ open }) => {
                     function handleOnClick(e: any) {
                       e.preventDefault();
@@ -125,7 +127,7 @@ export default function Home() {
               </div>
             </form>
           </div>
-          <div className={styles.image} style={{width:640,height:640}}>
+          <div className={styles.image}>
             <CldImage
               key={imageKey}
               src={background}
@@ -175,6 +177,16 @@ export default function Home() {
           </div>
         </div>
       </main>
+      <footer className={styles.footer}>
+        <div>
+          <p>
+            By <a href="https://twitter.com/colbyfayock">Colby Fayock</a> with <a href="https://nextjs.org/">Next.js</a> &amp; <a href="https://cloudinary.com/">Cloudinary</a>.
+          </p>
+          <p>
+            <a href="https://github.com/colbyfayock/meme-generator">View the source</a> or <a href="https://www.youtube.com/watch?v=-LAil8T78Ns">learn how to build this</a>!
+          </p>
+        </div>
+      </footer>
     </>
   )
 }
