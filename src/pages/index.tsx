@@ -30,7 +30,7 @@ const MEME_BACKGROUNDS = [
     width: 640,
     height: 360,
   },
-]
+];
 
 export default function Home() {
   const [topText, setTopText] = useState('Top Text');
@@ -43,11 +43,11 @@ export default function Home() {
   const debouncedSetBottomText = useDebouncedCallback((value) => setBottomText(value), 250);
 
   function handleOnTopTextChange(e: any) {
-    debouncedSetTopText(e.currentTarget.value);
+    debouncedSetTopText(e.currentTarget.value || ' ');
   }
 
   function handleOnBottomTextChange(e: any) {
-    debouncedSetBottomText(e.currentTarget.value);
+    debouncedSetBottomText(e.currentTarget.value || ' ');
   }
 
   function handleOnBackgroundchange(id: any) {
@@ -69,11 +69,8 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
 
-
-
-        <div className={styles.center}>
-          <h1 className={styles.title}>Meme Generator</h1>
-        </div>
+        <h1 className={styles.title}>Meme Generator</h1>
+        <p className={styles.description}>Become the next meme lord!</p>
 
         <div className={styles.center}>
           <div>
