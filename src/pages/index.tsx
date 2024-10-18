@@ -55,6 +55,7 @@ export default function Home() {
   }
 
   function handleOnBackgroundUpload(result: any) {
+    console.log(result)
     setBackground(result.info.public_id);
     console.log(result)
   }
@@ -108,7 +109,11 @@ export default function Home() {
                 </div>
               </div>
               <div className={styles.upload}>
-                <CldUploadWidget uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET} onUpload={handleOnBackgroundUpload}>
+                <CldUploadWidget
+                  options={{ folder: "meme-generator-uploads" }}
+                  onSuccess={handleOnBackgroundUpload}
+                  signatureEndpoint="/api/sign-cloudinary-params"
+                >
                   {({ open }) => {
                     function handleOnClick(e: any) {
                       e.preventDefault();
@@ -130,7 +135,10 @@ export default function Home() {
               src={background}
               width="640"
               height="640"
-              crop="fill"
+              crop={{
+                type: 'fill',
+                source: true
+              }}
               overlays={[
                 {
                   width: 2670 - 20,
