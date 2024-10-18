@@ -154,6 +154,7 @@ export default function Home() {
                     fontSize: 90,
                     fontWeight: 'bold',
                     text: topText.toUpperCase(),
+                    // @ts-ignore
                     stroke: true,
                     border: '20px_solid_black'
                   }
@@ -172,6 +173,7 @@ export default function Home() {
                     fontSize: 90,
                     fontWeight: 'bold',
                     text: bottomText.toUpperCase(),
+                    // @ts-ignore
                     stroke: true,
                     border: '20px_solid_black'
                   }
