@@ -110,7 +110,7 @@ export default function Home() {
               </div>
               <div className={styles.upload}>
                 <CldUploadWidget
-                  options={{ folder: "meme-generator-uploads" }}
+                  uploadPreset="meme-generator"
                   onSuccess={handleOnBackgroundUpload}
                   signatureEndpoint="/api/sign-cloudinary-params"
                 >
